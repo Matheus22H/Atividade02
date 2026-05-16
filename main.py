@@ -1,5 +1,7 @@
 import random, hashlib
 from sqlCommander import MySQL, User
+from env_loader import configs
+
 saudacoes = [
     'Olá usuário! Preciso te conhecer melhor, poderia me dar algumas informações?',
     '*Um usuário selvagem apareceu...*',
@@ -60,4 +62,21 @@ def main():
         print('Ocorreu um erro :( tente novamente...')
     else:
         print(f'AEEEE! Bem vindo {username}... ou melhor seria {nome}?')
-main()
+if configs.get('admin', False):
+    inicializar()
+    print('- ADMINISTRATIVO -')
+    print('- Funções:')
+    funcs = ['Sair', 'Desabilitar ADM', 'Pegar todos os usuários']
+    for func in enumerate(funcs, start=1):
+        print(f'{func[0]}.', func[1])
+    match int(input('Selecione tua opção (use números): ')):
+        case 1:
+            exit()
+        case 2:
+            with open('.env', 'w') as f:
+                f.write('{"admin":false}')
+            exit()
+        case 3:
+            print(_database.summarize_users())
+else:
+    main()
