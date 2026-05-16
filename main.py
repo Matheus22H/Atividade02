@@ -26,8 +26,38 @@ def coletar_senha():
     password_hash = hashlib.sha256(inputer("Shhhh... Insira sua senha: ", tamanho=8).encode()).hexdigest()
     return password_hash
 def coletar_nome():
-    nome = inputer('Hmmm. E seu nome, qual seria?')
+    nome = inputer('Hmmm. E seu nome, qual seria? ')
     return nome
 def inicializar():
     global _database
     _database = MySQL('./db.db')
+
+def usuario_existe(username):
+    return _database.verificar(username)
+
+def cadastrar_se():
+    global username
+    username = coletar_usuario()
+    if usuario_existe(username):
+        print('DEV')
+        return False
+    return True
+def criar_usuario(usuario_montado: User):
+    data = _database.add(usuario_montado)
+    return bool(data)
+def main():
+    global username
+    inicializar()
+    saudacao()
+    sucesso = cadastrar_se()
+    while not sucesso:
+        print('Ops... usuário já existente, poderia por favor tentar algo mais criativo? ')
+        sucesso = cadastrar_se()
+    password_hash = coletar_senha()
+    nome = coletar_nome()
+    usuario_montado = User(username, password_hash, nome)
+    if not criar_usuario(usuario_montado):
+        print('Ocorreu um erro :( tente novamente...')
+    else:
+        print(f'AEEEE! Bem vindo {username}... ou melhor seria {nome}?')
+main()
