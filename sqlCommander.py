@@ -1,11 +1,11 @@
 from env_loader import configs
 import sqlite3, hashlib
 class User:
-    def __init__(self, username, password, nome, code=None):
+    def __init__(self, username, password: str, nome, code=None):
         if code:
             self.code = code
         self.username = username
-        self.password = hashlib.sha256(password).hexdigest()
+        self.password = hashlib.sha256(password.encode()).hexdigest()
         self.nome = nome
     def dump(self):
         return (self.username, self.password, self.nome)
@@ -15,6 +15,7 @@ class MySQL(sqlite3.Connection):
         super().__init__(database)
         self.database_loc = database
         self.Cursor = self.cursor()
+        self.initializeDB()
     def initializeDB(self):
         self.execute("""CREATE TABLE IF NOT EXISTS usuarios (
             code            INTEGER PRIMARY KEY,
@@ -23,7 +24,8 @@ class MySQL(sqlite3.Connection):
             nome            TEXT    NOT     NULL)""")
     def add(self, user: User):
         try: 
-            self.Cursor.execute('INSERT INTO usuarios(username, password, nome) VALUES (?, ?, ?)', user.dump)
+            self.Cursor.execute('INSERT INTO usuarios(username, password, nome) VALUES (?, ?, ?)', user.dump())
+            self.commit()
             return 1
         except:
             print('Usuário já existe na Base de Dados')
@@ -42,5 +44,13 @@ class MySQL(sqlite3.Connection):
             return usuarios_carregados
         except:
             return 0
-
+    def verificar(self, usuario):
+        'retorna TRUE para garantir...'
+        try:
+            dados = self.Cursor.execute('SELECT COUNT(*) FROM usuarios WHERE username=(?)', (usuario,)).fetchall()[0][0]
+            if dados > 0:
+                return True
+            return False
+        except:
+            return True
             
