@@ -63,10 +63,9 @@ def main():
     else:
         print(f'AEEEE! Bem vindo {username}... ou melhor seria {nome}?')
 if configs.get('admin', False):
-    inicializar()
     print('- ADMINISTRATIVO -')
     print('- Funções:')
-    funcs = ['Sair', 'Desabilitar ADM', 'Pegar todos os usuários']
+    funcs = ['Sair', 'Desabilitar ADM', 'Pegar todos os usuários', 'Usar normalmente', 'Deletar tudo!']
     for func in enumerate(funcs, start=1):
         print(f'{func[0]}.', func[1])
     match int(input('Selecione tua opção (use números): ')):
@@ -77,6 +76,14 @@ if configs.get('admin', False):
                 f.write('{"admin":false}')
             exit()
         case 3:
-            print(_database.summarize_users())
+            inicializar()
+            if len([print(i) for i in _database.summarize_users()]) == 0:
+                print('Não tinha usuários...')
+        case 4:
+            main()
+        case 5:
+            inicializar()
+            print('Deletando tudo :< seu sem coração!!!')
+            _database.delete_all()
 else:
     main()
