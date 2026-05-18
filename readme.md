@@ -10,3 +10,5 @@
 - Refatorado grande parte de `main.py`
 - Adições de melhoria de vida.
 - Início da parte de testes para expansão do aplicativo.
+# Versão 1.1.001:
+- Adicionado um unico input no final para quem executar o `main.py` possa ter uma suavidade na execução, afinal, o código fechava rapido demais

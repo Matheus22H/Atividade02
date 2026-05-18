@@ -119,3 +119,4 @@ try:
     main()
 except KeyboardInterrupt:
     print('\n\nFinalizado por Ctrl+C')
+input('Programa finalizado, pressione enter para sair...')
