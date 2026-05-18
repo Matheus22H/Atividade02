@@ -4,14 +4,18 @@ class User:
     def __init__(self, username, password: str, nome, code=None):
         if code:
             self.code = code
+        else:
+            self.code = None
         self.username = username
         self.password = hashlib.sha256(password.encode()).hexdigest()
         self.nome = nome
     def dump(self):
         return (self.username, self.password, self.nome)
     def __repr__(self):
-        return f'{self.username=}, {self.password=}, {self.nome=}'
-
+        if self.code:
+            return f'{self.code=}, {self.username=}, {self.password=}, {self.nome=}'
+        else:
+            return f'{self.username=}, {self.password=}, {self.nome=}'
 class MySQL(sqlite3.Connection):
     def __init__(self, database):
         super().__init__(database)
@@ -42,7 +46,7 @@ class MySQL(sqlite3.Connection):
             return 0
     def summarize_users(self):
         try:
-            usuarios_carregados = [User(dado[1], dado[2], dado[3], dado[0]) for dado in self.Cursor.execute('SELECT * from usuarios').fetchall()]
+            usuarios_carregados = [User(dado[1], dado[2], dado[3], code=dado[0]) for dado in self.Cursor.execute('SELECT * from usuarios').fetchall()]
             return usuarios_carregados
         except:
             return 0
